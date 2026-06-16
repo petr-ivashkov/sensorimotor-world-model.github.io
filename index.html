@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Perception for Action in Latent World Models</title>
+  <meta name="description" content="Project page for Perception for Action in Latent World Models.">
+  <meta name="citation_title" content="Perception for Action in Latent World Models">
+  <meta name="citation_author" content="Ivashkov, Petr">
+  <meta name="citation_author" content="Balestriero, Randall">
+  <meta name="citation_author" content="Schölkopf, Bernhard">
+  <meta name="citation_publication_date" content="2026">
+
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)'], ['$', '$']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      svg: { fontCache: 'global' }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+  <style>
+    :root {
+      --text: #181818;
+      --muted: #5d6470;
+      --border: #dfe3e8;
+      --soft: #f7f8fa;
+      --accent: #9f2f36;
+      --accent-2: #155c9b;
+      --link: #155c9b;
+      --code-bg: #f4f5f7;
+      --max: 960px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--text);
+      background: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.62;
+      letter-spacing: 0;
+    }
+
+    a {
+      color: var(--link);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .container {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    header {
+      border-bottom: 1px solid var(--border);
+      background: #fbfbfc;
+      text-align: center;
+    }
+
+    .hero {
+      padding: 58px 24px 42px;
+    }
+
+    h1 {
+      max-width: 920px;
+      margin: 0 auto 20px;
+      font-size: 44px;
+      line-height: 1.12;
+      font-weight: 700;
+    }
+
+    h2 {
+      margin: 0 0 18px;
+      font-size: 28px;
+      line-height: 1.25;
+      font-weight: 650;
+      text-align: center;
+    }
+
+    h3 {
+      margin: 28px 0 10px;
+      font-size: 19px;
+      line-height: 1.35;
+      font-weight: 650;
+    }
+
+    p {
+      margin: 0 0 15px;
+    }
+
+    .authors {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px 20px;
+      margin: 0 auto 12px;
+      font-size: 18px;
+    }
+
+    .authors sup {
+      margin-left: 2px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .affiliations {
+      max-width: 820px;
+      margin: 0 auto;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .affiliations span {
+      display: block;
+    }
+
+    .links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .link-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 7px 14px;
+      border: 1px solid #cfd6df;
+      border-radius: 7px;
+      background: #ffffff;
+      color: #20242a;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .link-button:hover {
+      border-color: var(--accent-2);
+      color: var(--accent-2);
+      text-decoration: none;
+    }
+
+    .link-button.placeholder {
+      color: #6b7280;
+      border-style: dashed;
+      background: #fafafa;
+      cursor: default;
+    }
+
+    section {
+      padding: 42px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    section:last-of-type {
+      border-bottom: 0;
+    }
+
+    .lead {
+      max-width: 820px;
+      margin: 0 auto;
+      text-align: left;
+      font-size: 17px;
+    }
+
+    .tldr {
+      max-width: 820px;
+      margin: 0 auto;
+      font-size: 17px;
+    }
+
+    .tldr strong {
+      font-weight: 700;
+    }
+
+    figure {
+      margin: 30px auto 36px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #ffffff;
+    }
+
+    figure a {
+      display: block;
+      padding: 18px 24px;
+      background: #ffffff;
+    }
+
+    figure img {
+      display: block;
+      width: 100%;
+      height: auto;
+      background: #ffffff;
+    }
+
+    figcaption {
+      margin: 0;
+      padding: 13px 16px 15px;
+      color: #363b42;
+      background: #f7f8fa;
+      border-top: 1px solid var(--border);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .display-math {
+      overflow-x: auto;
+      margin: 8px 0 18px;
+      padding: 0 4px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin: 22px 0;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 680px;
+      background: #ffffff;
+      font-size: 14px;
+    }
+
+    th,
+    td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #f4f6f8;
+      font-weight: 650;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .placeholder-box {
+      margin-top: 22px;
+      padding: 16px;
+      border: 1px dashed #aab2bd;
+      border-radius: 8px;
+      background: #fbfbfc;
+      color: #424851;
+      font-size: 14px;
+    }
+
+    .placeholder-box code,
+    pre code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+    }
+
+    pre {
+      overflow-x: auto;
+      margin: 0;
+      padding: 18px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--code-bg);
+      color: #20242a;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .citation-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin: 0 0 10px;
+    }
+
+    button.copy {
+      min-height: 34px;
+      padding: 6px 12px;
+      border: 1px solid #cfd6df;
+      border-radius: 7px;
+      background: #ffffff;
+      color: #20242a;
+      font: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    button.copy:hover {
+      border-color: var(--accent-2);
+      color: var(--accent-2);
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 28px 0 34px;
+      color: var(--muted);
+      background: #fbfbfc;
+      text-align: center;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    footer p {
+      max-width: 820px;
+      margin: 0 auto 8px;
+    }
+
+    @media (max-width: 780px) {
+      .hero {
+        padding-top: 40px;
+      }
+
+      h1 {
+        font-size: 34px;
+      }
+
+      h2 {
+        font-size: 24px;
+      }
+
+      .authors {
+        font-size: 17px;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .container {
+        padding: 0 16px;
+      }
+
+      .hero {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      h1 {
+        font-size: 30px;
+      }
+
+      section {
+        padding: 34px 0;
+      }
+
+      .link-button {
+        width: 100%;
+      }
+
+      figure a,
+      figcaption {
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="hero">
+      <h1>Perception for Action in Latent World Models</h1>
+      <div class="authors">
+        <a href="https://openreview.net/profile?id=~Petr_Ivashkov1">Petr Ivashkov<sup>1</sup></a>
+        <a href="https://openreview.net/profile?id=~Randall_Balestriero1">Randall Balestriero<sup>2</sup></a>
+        <a href="https://openreview.net/profile?id=~Bernhard_Sch%C3%B6lkopf1">Bernhard Schölkopf<sup>1,3,4</sup></a>
+      </div>
+      <div class="affiliations">
+        <span><sup>1</sup>Max Planck Institute for Intelligent Systems, Tübingen, Germany</span>
+        <span><sup>2</sup>Department of Computer Science, Brown University, Providence, RI, USA</span>
+        <span><sup>3</sup>ELLIS Institute Tübingen &nbsp; <sup>4</sup>ETH Zürich</span>
+      </div>
+      <nav class="links" aria-label="Project links">
+        <span class="link-button placeholder" aria-disabled="true">arXiv TODO</span>
+        <a class="link-button" href="https://github.com/petr-ivashkov/sensorimotor-world-model">Code</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section id="summary">
+      <div class="container">
+        <h2>TL;DR</h2>
+        <div class="tldr">
+          <p>We propose a simple pixel-based latent world model trained end-to-end using inverse dynamics as the only anti-collapse mechanism. The model learns interpretable low-dimensional representations and achieves competitive planning performance across 2D and 3D tasks.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="abstract">
+      <div class="container">
+        <h2>Abstract</h2>
+        <p class="lead"><em>Perception for action</em> suggests that representations of the world should be shaped not by visual fidelity alone, but by their relevance for actions. At the same time, latent JEPA-style world models advocate learning compact predictive states from high-dimensional observations to facilitate the prediction of future states, but end-to-end training of these models is nontrivial because representations may collapse if our only goal is to construct a latent state that is easy to predict. We show that a suitable inverse dynamics regularization addresses both issues: it is an effective anti-collapse mechanism that induces action-aligned representations. By forcing latent states to preserve information about the action underlying a transition, it biases the model toward the controllable degrees of freedom of the environment while discarding uncontrollable distractors. This yields stable latent world models trained end-to-end from offline, reward-free trajectories, without frozen encoders, exponential moving averages, or complex latent regularizers. Empirically, the learned latent spaces are compact, interpretable, and enable competitive planning performance across simple 2D and 3D control tasks.</p>
+      </div>
+    </section>
+
+    <section id="approach">
+      <div class="container">
+        <h2>Approach</h2>
+        <p>We consider an offline dataset \(\mathcal{D} = \{(o_t, a_t, o_{t+1})\}\) of reward-free transitions, where \(o_t\) and \(o_{t+1}\) are consecutive pixel observations and \(a_t \in \mathcal{A} \subseteq \mathbb{R}^m\) is the continuous action executed between them. The model consists of an encoder \(f_\theta\), a forward dynamics model \(g_\phi\), and an inverse dynamics model \(h_\psi\), all trained jointly from the same transition data.</p>
+
+        <figure>
+          <a href="static/images/schematic.png">
+            <img src="static/images/schematic.png" alt="Schematic of encoder, forward model, inverse model, forward loss, and inverse loss." loading="lazy">
+          </a>
+          <figcaption><strong>Method overview.</strong> The encoder maps each observation to a compact embedding. The forward model predicts the next embedding from the current embedding and action; the inverse model predicts the executed action from consecutive embeddings. Both losses backpropagate into the encoder through \(\mathcal{L} = \mathcal{L}_{\text{fwd}} + \lambda\,\mathcal{L}_{\text{inv}}\).</figcaption>
+        </figure>
+
+        <p>The forward component learns dynamics directly in embedding space. Given a transition, both observations are encoded and the forward model predicts the next embedding from the current embedding and action:</p>
+        <div class="display-math">
+          $$
+            z_t = f_\theta(o_t), \quad z_{t+1} = f_\theta(o_{t+1}), \quad \hat{z}_{t+1} = g_\phi(z_t, a_t).
+          $$
+        </div>
+        <p>The corresponding prediction loss minimizes the discrepancy between the predicted embedding and the encoded next observation,</p>
+        <div class="display-math">
+          $$
+            \mathcal{L}_{\text{fwd}} =
+            \mathbb{E}_{(o_t, a_t, o_{t+1}) \sim \mathcal{D}}
+            \left[ \| \hat{z}_{t+1} - z_{t+1} \|_2^2 \right].
+          $$
+        </div>
+        <p>On its own, this objective admits the familiar collapsed solution: a constant encoder and a constant predictor can achieve zero forward loss while discarding all information about the observation. The inverse head prevents this by requiring the action to remain recoverable from the pair of consecutive embeddings,</p>
+        <div class="display-math">
+          $$
+            \hat{a}_t = h_\psi(z_t, z_{t+1}),
+          $$
+        </div>
+        <p>with the mean-squared inverse dynamics loss</p>
+        <div class="display-math">
+          $$
+            \mathcal{L}_{\text{inv}} =
+            \mathbb{E}_{(o_t, a_t, o_{t+1}) \sim \mathcal{D}}
+            \left[ \| \hat{a}_t - a_t \|_2^2 \right].
+          $$
+        </div>
+        <p>The final objective combines these two terms, allowing both the forward and inverse losses to shape the encoder:</p>
+        <div class="display-math">
+          $$
+            \mathcal{L} = \mathcal{L}_{\text{fwd}} + \lambda \, \mathcal{L}_{\text{inv}}.
+          $$
+        </div>
+      </div>
+    </section>
+
+    <section id="latent-structure">
+      <div class="container">
+        <h2>Learned Latent Structure</h2>
+        <p>To build intuition for what the inverse-dynamics-regularized objective learns, we first consider a minimal testbed with known ground-truth state, intrinsic dimension, and action geometry. In dot world, a single colored dot is rendered on a \(64{\times}64\) canvas, and the action is the 2D displacement \(a_t=(\Delta x,\Delta y)\). Although the encoder maps images into a 64-dimensional latent space, the relevant state of the environment is only two-dimensional.</p>
+
+        <figure>
+          <a href="static/images/dot_world_embeddings.png">
+            <img src="static/images/dot_world_embeddings.png" alt="PCA spectrum, world state grid, and encoded embeddings for dot world." loading="lazy">
+          </a>
+          <figcaption><strong>Dot world latent geometry.</strong> Two principal components carry essentially all variance, matching \(d_{\text{true}} = 2\), and the projected embeddings preserve the spatial grid up to rotation and sign.</figcaption>
+        </figure>
+
+        <p>A useful latent state should also be compatible with the learned forward dynamics. The paper therefore tests whether encoded observations and autoregressive latent predictions agree along a 5-step action sequence. The resulting rollout shows that the forward model tracks the encoded ground-truth trajectory in the learned latent space.</p>
+
+        <figure>
+          <a href="static/images/latent_rollout.png">
+            <img src="static/images/latent_rollout.png" alt="Commutative diagram and a five-step latent rollout compared with encoded ground truth." loading="lazy">
+          </a>
+          <figcaption><strong>Encoder and forward model commute.</strong> A 5-step latent rollout tracks encoded ground-truth embeddings, showing that the learned forward model remains consistent with the encoder along the tested trajectory.</figcaption>
+        </figure>
+
+        <p>The same analysis can be made more stringent by varying which degrees of freedom are controllable and by introducing distractors whose motion is not controlled by the action. In these settings, the learned representation should retain the coordinates needed for action recovery and forward prediction while suppressing variation that is neither controllable nor predictable.</p>
+
+        <figure>
+          <a href="static/images/structured_dot_world.png">
+            <img src="static/images/structured_dot_world.png" alt="Structured dot world configurations and PCA spectra." loading="lazy">
+          </a>
+          <figcaption><strong>Effective latent dimension tracks controllable degrees of freedom.</strong> In the Independent, Coupled, Distractor, and Combined configurations, the number of significant principal components matches controllable dimensions \(4\), \(2\), \(2\), and \(6\). Uncontrollable distractor motion is filtered out.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section id="planning">
+      <div class="container">
+        <h2>Planning in Latent Space</h2>
+        <p>The latent structure recovered above is useful only insofar as it carries over to richer environments and supports downstream control. For goal-conditioned planning, a current observation \(o_1\) and goal observation \(o_g\) are encoded as \(z_1=f_\theta(o_1)\) and \(z_g=f_\theta(o_g)\). Candidate action sequences are rolled out through the learned forward model, and each sequence is scored by its terminal distance to the goal embedding,</p>
+        <div class="display-math">
+          $$
+            \mathcal{C}(a_{1:H}) = \| \hat z_{H+1} - z_g \|_2^2 .
+          $$
+        </div>
+        <p>The action sequence is optimized with the Cross-Entropy Method inside a receding-horizon MPC loop. Experiments evaluate TwoRoom, Reacher, Push-T, and OGBench-Cube with a fixed budget of \(50\) environment steps per episode and goals placed \(25\) steps ahead of the initial state.</p>
+        <p>The main comparison is against <a href="https://le-wm.github.io/">LeWorldModel (LeWM)</a>, which uses SIGReg as its anti-collapse mechanism. This baseline shares the encoder and predictor architecture but replaces the inverse-dynamics loss with a regularizer that encourages the latent embedding distribution to match an isotropic Gaussian.</p>
+
+        <figure>
+          <a href="static/images/main_planning_overview.png">
+            <img src="static/images/main_planning_overview.png" alt="Planning success rates across TwoRoom, Reacher, Push-T, and OGBench-Cube." loading="lazy">
+          </a>
+          <figcaption><strong>Planning success across environments.</strong> Inverse-dynamics regularization matches the LeWM/SIGReg baseline on the three 2D tasks and outperforms it on OGBench-Cube. Both regularized variants dominate the Forward-only ablation and Random-action baseline.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section id="analysis">
+      <div class="container">
+        <h2>Representation Analysis</h2>
+        <p>To assess what physical content the embeddings retain, we first probe frozen embeddings for ground-truth state variables using both linear and two-layer MLP probes. Reported values are held-out \(R^2\) scores on a \(5{,}000\)-sample validation split after training probes on \(25{,}000\) embeddings per environment and method.</p>
+
+        <div class="table-wrap" aria-label="Physical state probing table">
+          <table>
+            <thead>
+              <tr>
+                <th>Environment</th>
+                <th>Quantity</th>
+                <th>Linear Our</th>
+                <th>Linear SIGReg</th>
+                <th>Linear Fwd.</th>
+                <th>MLP Our</th>
+                <th>MLP SIGReg</th>
+                <th>MLP Fwd.</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>TwoRoom</td><td>agent position</td><td><strong>1.000</strong></td><td>0.996</td><td>0.832</td><td><strong>1.000</strong></td><td><strong>1.000</strong></td><td>0.991</td></tr>
+              <tr><td>Reacher</td><td>joint angles</td><td>0.946</td><td><strong>0.999</strong></td><td>0.647</td><td>0.995</td><td><strong>1.000</strong></td><td>0.962</td></tr>
+              <tr><td>Push-T</td><td>agent position</td><td><strong>0.993</strong></td><td>0.954</td><td>0.293</td><td><strong>0.988</strong></td><td>0.986</td><td>0.433</td></tr>
+              <tr><td>Push-T</td><td>block position</td><td>0.946</td><td><strong>0.973</strong></td><td>0.352</td><td>0.981</td><td><strong>0.996</strong></td><td>0.623</td></tr>
+              <tr><td>Push-T</td><td>block orientation</td><td>0.664</td><td><strong>0.931</strong></td><td>0.202</td><td>0.882</td><td><strong>0.987</strong></td><td>0.491</td></tr>
+              <tr><td>Cube</td><td>cube position</td><td><strong>0.998</strong></td><td>0.975</td><td>0.706</td><td><strong>0.998</strong></td><td>0.993</td><td>0.854</td></tr>
+              <tr><td>Cube</td><td>gripper position</td><td><strong>0.999</strong></td><td>0.986</td><td>0.902</td><td><strong>0.999</strong></td><td>0.995</td><td>0.979</td></tr>
+              <tr><td>Cube</td><td>gripper opening</td><td><strong>0.989</strong></td><td>0.961</td><td>0.269</td><td><strong>0.992</strong></td><td>0.983</td><td>0.427</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>We then inspect how this information is organized geometrically. For each environment, the figure below shows the PCA spectrum of held-out embeddings, the distribution of a representative ground-truth quantity in physical state space, and the embeddings projected onto a low-dimensional principal-component subspace, color-coded by the same physical quantity. The spectra reveal whether the representation concentrates on a compact subspace, while the projections show whether the dominant latent directions align with controllable state variables.</p>
+
+        <figure>
+          <a href="static/images/environment_emebddings.png">
+            <img src="static/images/environment_emebddings.png" alt="PCA spectra, physical state distributions, and encoded embeddings for four environments." loading="lazy">
+          </a>
+          <figcaption><strong>Latent geometry of inverse-regularized embeddings.</strong> Across all four environments, embeddings concentrate on a low-dimensional subspace whose geometry mirrors controllable state space: Cartesian coordinates appear as approximately linear directions, while Reacher's periodic joint angles are encoded as a flat 2-torus.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section id="citation">
+      <div class="container">
+        <h2>Citation</h2>
+        <div class="citation-actions">
+          <button class="copy" type="button" data-copy-target="bibtex">Copy BibTeX</button>
+        </div>
+        <pre><code id="bibtex">@misc{ivashkov2026perception,
+  title        = {Perception for Action in Latent World Models},
+  author       = {Ivashkov, Petr and Balestriero, Randall and Sch{\"o}lkopf, Bernhard},
+  year         = {2026},
+  note         = {Manuscript},
+  url          = {TODO: add project or arXiv URL}
+}</code></pre>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>For questions or collaborations, please contact <a href="mailto:petr.ivashkov@tuebingen.mpg.de">petr.ivashkov@tuebingen.mpg.de</a>.</p>
+      <p>Built with the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template">Academic Project Page Template</a>, adapted from the <a href="https://nerfies.github.io/">Nerfies</a> project page.</p>
+      <p>This website is licensed under a <a href="https://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.</p>
+    </div>
+  </footer>
+
+  <script>
+    document.querySelectorAll('[data-copy-target]').forEach((button) => {
+      button.addEventListener('click', async () => {
+        const target = document.getElementById(button.dataset.copyTarget);
+        if (!target) return;
+        try {
+          await navigator.clipboard.writeText(target.textContent);
+          const original = button.textContent;
+          button.textContent = 'Copied';
+          window.setTimeout(() => {
+            button.textContent = original;
+          }, 1400);
+        } catch (error) {
+          button.textContent = 'Select BibTeX';
+        }
+      });
+    });
+  </script>
+</body>
+</html>
