@@ -3,9 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Perception for Action in Latent World Models</title>
-  <meta name="description" content="Project page for Perception for Action in Latent World Models.">
-  <meta name="citation_title" content="Perception for Action in Latent World Models">
+  <title>Sensorimotor World Models: Perception for Action via Inverse Dynamics</title>
+  <meta name="description" content="Project page for Sensorimotor World Models: Perception for Action via Inverse Dynamics.">
+  <link rel="canonical" href="https://petr-ivashkov.github.io/sensorimotor-world-model.github.io/">
+  <meta name="citation_title" content="Sensorimotor World Models: Perception for Action via Inverse Dynamics">
   <meta name="citation_author" content="Ivashkov, Petr">
   <meta name="citation_author" content="Balestriero, Randall">
   <meta name="citation_author" content="Schölkopf, Bernhard">
@@ -380,15 +381,15 @@
 <body>
   <header>
     <div class="hero">
-      <h1>Perception for Action in Latent World Models</h1>
+      <h1>Sensorimotor World Models: Perception for Action via Inverse Dynamics</h1>
       <div class="authors">
         <a href="https://openreview.net/profile?id=~Petr_Ivashkov1">Petr Ivashkov<sup>1</sup></a>
         <a href="https://openreview.net/profile?id=~Randall_Balestriero1">Randall Balestriero<sup>2</sup></a>
         <a href="https://openreview.net/profile?id=~Bernhard_Sch%C3%B6lkopf1">Bernhard Schölkopf<sup>1,3,4</sup></a>
       </div>
       <div class="affiliations">
-        <span><sup>1</sup>Max Planck Institute for Intelligent Systems, Tübingen, Germany</span>
-        <span><sup>2</sup>Department of Computer Science, Brown University, Providence, RI, USA</span>
+        <span><sup>1</sup>Max Planck Institute for Intelligent Systems</span>
+        <span><sup>2</sup>Department of Computer Science, Brown University</span>
         <span><sup>3</sup>ELLIS Institute Tübingen &nbsp; <sup>4</sup>ETH Zürich</span>
       </div>
       <nav class="links" aria-label="Project links">
@@ -403,7 +404,7 @@
       <div class="container">
         <h2>TL;DR</h2>
         <div class="tldr">
-          <p>We propose a simple pixel-based latent world model trained end-to-end using inverse dynamics as the only anti-collapse mechanism. The model learns interpretable low-dimensional representations and achieves competitive planning performance across 2D and 3D tasks.</p>
+          <p>We introduce a sensorimotor world model (SmWM): a latent world model trained end-to-end from pixels with inverse dynamics regularization as the solve anti-collapse mechanism. Empirically, SmWM learns interpretable low-dimensional representations and achieves competitive planning performance across 2D and 3D tasks.</p>
         </div>
       </div>
     </section>
@@ -411,20 +412,20 @@
     <section id="abstract">
       <div class="container">
         <h2>Abstract</h2>
-        <p class="lead"><em>Perception for action</em> suggests that representations of the world should be shaped not by visual fidelity alone, but by their relevance for actions. At the same time, latent JEPA-style world models advocate learning compact predictive states from high-dimensional observations to facilitate the prediction of future states, but end-to-end training of these models is nontrivial because representations may collapse if our only goal is to construct a latent state that is easy to predict. We show that a suitable inverse dynamics regularization addresses both issues: it is an effective anti-collapse mechanism that induces action-aligned representations. By forcing latent states to preserve information about the action underlying a transition, it biases the model toward the controllable degrees of freedom of the environment while discarding uncontrollable distractors. This yields stable latent world models trained end-to-end from offline, reward-free trajectories, without frozen encoders, exponential moving averages, or complex latent regularizers. Empirically, the learned latent spaces are compact, interpretable, and enable competitive planning performance across simple 2D and 3D control tasks.</p>
+        <p class="lead"><em>Perception for action</em> suggests that representations of the world should be shaped not by visual fidelity alone, but by their relevance for actions. At the same time, latent JEPA-style world models advocate learning compact predictive states from high-dimensional observations to facilitate the prediction of future states, but end-to-end training of these models is nontrivial because representations may collapse if our only goal is to construct a latent state that is easy to predict. We introduce SmWM: a latent world model trained end-to-end with inverse dynamics regularization. This single regularizer addresses both issues: it prevents representation collapse and induces action-aligned representations. By forcing latent states to preserve information about the action underlying a transition, it biases the model toward the controllable degrees of freedom of the environment while discarding uncontrollable distractors. This yields stable latent world models trained from offline, reward-free trajectories, without frozen encoders, exponential moving averages, or complex latent regularizers. Empirically, SmWM learns compact, interpretable latent spaces and enables competitive planning performance across simple 2D and 3D control tasks.</p>
       </div>
     </section>
 
     <section id="approach">
       <div class="container">
         <h2>Approach</h2>
-        <p>We consider an offline dataset \(\mathcal{D} = \{(o_t, a_t, o_{t+1})\}\) of reward-free transitions, where \(o_t\) and \(o_{t+1}\) are consecutive pixel observations and \(a_t \in \mathcal{A} \subseteq \mathbb{R}^m\) is the continuous action executed between them. The model consists of an encoder \(f_\theta\), a forward dynamics model \(g_\phi\), and an inverse dynamics model \(h_\psi\), all trained jointly from the same transition data.</p>
+        <p>We consider an offline dataset \(\mathcal{D} = \{(o_t, a_t, o_{t+1})\}\) of reward-free transitions, where \(o_t\) and \(o_{t+1}\) are consecutive pixel observations and \(a_t \in \mathcal{A} \subseteq \mathbb{R}^m\) is the continuous action executed between them. SmWM consists of an encoder \(f_\theta\), a forward dynamics model \(g_\phi\), and an inverse dynamics model \(h_\psi\), all trained jointly from the same transition data.</p>
 
         <figure>
           <a href="static/images/schematic.png">
             <img src="static/images/schematic.png" alt="Schematic of encoder, forward model, inverse model, forward loss, and inverse loss." loading="lazy">
           </a>
-          <figcaption><strong>Method overview.</strong> The encoder maps each observation to a compact embedding. The forward model predicts the next embedding from the current embedding and action; the inverse model predicts the executed action from consecutive embeddings. Both losses backpropagate into the encoder through \(\mathcal{L} = \mathcal{L}_{\text{fwd}} + \lambda\,\mathcal{L}_{\text{inv}}\).</figcaption>
+          <figcaption><strong>Method overview.</strong> SmWM maps each observation to a compact embedding, predicts the next embedding from the current embedding and action, and predicts the executed action from consecutive embeddings. Both losses backpropagate into the encoder through \(\mathcal{L} = \mathcal{L}_{\text{fwd}} + \lambda\,\mathcal{L}_{\text{inv}}\), so inverse dynamics regularization acts as the anti-collapse mechanism.</figcaption>
         </figure>
 
         <p>The forward component learns dynamics directly in embedding space. Given a transition, both observations are encoded and the forward model predicts the next embedding from the current embedding and action:</p>
@@ -467,7 +468,7 @@
     <section id="latent-structure">
       <div class="container">
         <h2>Learned Latent Structure</h2>
-        <p>To build intuition for what the inverse-dynamics-regularized objective learns, we first consider a minimal testbed with known ground-truth state, intrinsic dimension, and action geometry. In dot world, a single colored dot is rendered on a \(64{\times}64\) canvas, and the action is the 2D displacement \(a_t=(\Delta x,\Delta y)\). Although the encoder maps images into a 64-dimensional latent space, the relevant state of the environment is only two-dimensional.</p>
+        <p>To build intuition for what SmWM learns, we first consider a minimal testbed with known ground-truth state, intrinsic dimension, and action geometry. In dot world, a single colored dot is rendered on a \(64{\times}64\) canvas, and the action is the 2D displacement \(a_t=(\Delta x,\Delta y)\). Although the encoder maps images into a 64-dimensional latent space, the relevant state of the environment is only two-dimensional.</p>
 
         <figure>
           <a href="static/images/dot_world_embeddings.png">
@@ -506,13 +507,13 @@
           $$
         </div>
         <p>The action sequence is optimized with the Cross-Entropy Method inside a receding-horizon MPC loop. Experiments evaluate TwoRoom, Reacher, Push-T, and OGBench-Cube with a fixed budget of \(50\) environment steps per episode and goals placed \(25\) steps ahead of the initial state.</p>
-        <p>The main comparison is against <a href="https://le-wm.github.io/">LeWorldModel (LeWM)</a>, which uses SIGReg as its anti-collapse mechanism. This baseline shares the encoder and predictor architecture but replaces the inverse-dynamics loss with a regularizer that encourages the latent embedding distribution to match an isotropic Gaussian.</p>
+        <p>The main comparison is against <a href="https://le-wm.github.io/">LeWorldModel (LeWM)</a>, which uses SIGReg as its anti-collapse mechanism. This baseline shares the encoder and predictor architecture but replaces inverse dynamics regularization with a regularizer that encourages the latent embedding distribution to match an isotropic Gaussian.</p>
 
         <figure>
           <a href="static/images/main_planning_overview.png">
             <img src="static/images/main_planning_overview.png" alt="Planning success rates across TwoRoom, Reacher, Push-T, and OGBench-Cube." loading="lazy">
           </a>
-          <figcaption><strong>Planning success across environments.</strong> Inverse-dynamics regularization matches the LeWM/SIGReg baseline on the three 2D tasks and outperforms it on OGBench-Cube. Both regularized variants dominate the Forward-only ablation and Random-action baseline.</figcaption>
+          <figcaption><strong>Planning success across environments.</strong> SmWM matches the LeWM/SIGReg baseline on the three 2D tasks and clearly outperforms it on OGBench-Cube, retaining \(84\%\) success while SIGReg drops to \(59\%\). Both regularized variants dominate the Forward-only ablation and Random-action baseline.</figcaption>
         </figure>
       </div>
     </section>
@@ -528,10 +529,10 @@
               <tr>
                 <th>Environment</th>
                 <th>Quantity</th>
-                <th>Linear Our</th>
+                <th>Linear SmWM</th>
                 <th>Linear SIGReg</th>
                 <th>Linear Fwd.</th>
-                <th>MLP Our</th>
+                <th>MLP SmWM</th>
                 <th>MLP SIGReg</th>
                 <th>MLP Fwd.</th>
               </tr>
@@ -549,13 +550,13 @@
           </table>
         </div>
 
-        <p>We then inspect how this information is organized geometrically. For each environment, the figure below shows the PCA spectrum of held-out embeddings, the distribution of a representative ground-truth quantity in physical state space, and the embeddings projected onto a low-dimensional principal-component subspace, color-coded by the same physical quantity. The spectra reveal whether the representation concentrates on a compact subspace, while the projections show whether the dominant latent directions align with controllable state variables.</p>
+        <p>We then inspect how this information is organized geometrically. For each environment, the figure below shows the PCA spectrum of held-out SmWM embeddings, the distribution of a representative ground-truth quantity in physical state space, and the embeddings projected onto a low-dimensional principal-component subspace, color-coded by the same physical quantity. The spectra reveal whether the representation concentrates on a compact subspace, while the projections show whether the dominant latent directions align with controllable state variables.</p>
 
         <figure>
           <a href="static/images/environment_emebddings.png">
             <img src="static/images/environment_emebddings.png" alt="PCA spectra, physical state distributions, and encoded embeddings for four environments." loading="lazy">
           </a>
-          <figcaption><strong>Latent geometry of inverse-regularized embeddings.</strong> Across all four environments, embeddings concentrate on a low-dimensional subspace whose geometry mirrors controllable state space: Cartesian coordinates appear as approximately linear directions, while Reacher's periodic joint angles are encoded as a flat 2-torus.</figcaption>
+          <figcaption><strong>Latent geometry of SmWM embeddings.</strong> Across all four environments, embeddings concentrate on a low-dimensional subspace whose geometry mirrors controllable state space: Cartesian coordinates appear as approximately linear directions, while Reacher's periodic joint angles are encoded as a flat 2-torus.</figcaption>
         </figure>
       </div>
     </section>
@@ -566,12 +567,12 @@
         <div class="citation-actions">
           <button class="copy" type="button" data-copy-target="bibtex">Copy BibTeX</button>
         </div>
-        <pre><code id="bibtex">@misc{ivashkov2026perception,
-  title        = {Perception for Action in Latent World Models},
+        <pre><code id="bibtex">@misc{ivashkov2026sensorimotor,
+  title        = {Sensorimotor World Models: Perception for Action via Inverse Dynamics},
   author       = {Ivashkov, Petr and Balestriero, Randall and Sch{\"o}lkopf, Bernhard},
   year         = {2026},
   note         = {Manuscript},
-  url          = {TODO: add project or arXiv URL}
+  url          = {https://petr-ivashkov.github.io/sensorimotor-world-model.github.io/}
 }</code></pre>
       </div>
     </section>
